@@ -17,7 +17,7 @@
  */
 #include <iostream>
 #include <bitset>
-#include <functional>
+#include <fstream>
 
 int main(){
     // for now this file is used to experiment with stuff.
@@ -30,11 +30,15 @@ int main(){
     //std::cout << std::bitset<8>(operation) << std::endl;
     */
 
-    std::function<void()> lambda = [](){
-        std::cout << "hello" << std::endl;
-    };
+    const std::ifstream rom("../READE.md");
+    if(rom){
+        std::cout << "file was opened.";
+    } else{
+        std::cout << "couldn't open file.";
+    }
 
-    lambda();
+    std::cout << std::endl;
+
 
 
 

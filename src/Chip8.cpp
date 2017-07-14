@@ -17,6 +17,9 @@
  */
 
 #include "Chip8.h"
+#include <fstream>
+#include <iostream>
+#include <vector>
 
 Chip8::Chip8(){
     init();
@@ -44,6 +47,21 @@ void Chip8::init(){
     soundTimer_ = 0x0;
 }
 
-void Chip8::load(){
-    // load the game.
+void Chip8::load(const std::string &path){
+    std::ifstream rom(path, std::ios::binary);
+    if(rom){
+        std::vector<unsigned char> buffer(
+                (std::istreambuf_iterator<char>(rom)),
+                (std::istreambuf_iterator<char>()));
+        if(buffer.size() > (4096 - 512)){
+            std::cerr << "The size of the ROM file is too large." << std::endl;
+        } else{
+            for(int i = 0; i < buffer.size(); ++i){
+                memory_.at(i + 512) = buffer.at(i);
+            }
+            std::cout << "ROM file has been copied successfully." << std::endl;
+        }
+    } else{
+        std::cerr << "ROM file couldn't be opened." << std::endl;
+    }
 }

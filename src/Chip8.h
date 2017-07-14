@@ -37,5 +37,5 @@ class Chip8{
         Chip8();
         void execute(const unsigned short& opFirst, const unsigned short& opSecond);
         void init();
-        void load();
+        void load(const std::string& path);
 };
