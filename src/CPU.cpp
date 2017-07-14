@@ -22,8 +22,6 @@ CPU::CPU(){
 }
 
 void CPU::init(){
-    for(int i = 0; i < register_.size(); ++i){
-        register_.at(i) = 0;
-    }
+    register_.fill(0);
     opcode_ = 0;
 }
