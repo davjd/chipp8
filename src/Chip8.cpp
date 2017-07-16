@@ -26,7 +26,6 @@ Chip8::Chip8(){
 }
 
 void Chip8::init(){
-    cpu_ = std::make_unique<CPU>();
     opcode_ = 0x0;
     pCtr_ = 0x200;
     index_ = 0x0;
@@ -35,6 +34,7 @@ void Chip8::init(){
     for(int i = 0; i < 16; ++i){
         stack_.at(i) = 0;
         keys_.at(i) = 0;
+        register_.at(i) = 0;
     }
 
     graphics_.fill(0);
@@ -82,13 +82,25 @@ void Chip8::load(const std::string &path){
             rom.read(buffer, size);
             
             for(int i = 0; i < size; ++i){
-                memory_.at(i + 512) = buffer[i];
+                memory_.at(i + 512) = ((unsigned char) buffer[i]);
             }
 
-            rom.close();
             std::cout << "The ROM file has been loaded successfully." << std::endl;
         }
+        rom.close();
     } else{
         std::cerr << "The ROM file couldn't be opened." << std::endl;
+    }
+}
+
+void Chip8::cycle(){
+    // fetch opcode.
+    opcode_ = memory_[pCtr_] << 8 | memory_[pCtr_ + 1];
+
+    // decode opcode by isolating the operation.
+    switch(1){
+        
+
+
     }
 }
