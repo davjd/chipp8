@@ -15,6 +15,8 @@
  *
  * =====================================================================================
  */
+#ifndef CHIP8_H
+#define CHIP8_H
 
 #include <array>
 #include <memory>
@@ -39,3 +41,5 @@ class Chip8{
         void init();
         void load(const std::string& path);
 };
+
+#endif

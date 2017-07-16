@@ -32,14 +32,36 @@ void Chip8::init(){
     index_ = 0x0;
     stackPtr_ = 0x0;
 
-    stack_.fill(0);
+    for(int i = 0; i < 16; ++i){
+        stack_.at(i) = 0;
+        keys_.at(i) = 0;
+    }
+
     graphics_.fill(0);
-    keys_.fill(0);
+    fontset_=
+        {{ 
+            0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
+            0x20, 0x60, 0x20, 0x20, 0x70, // 1
+            0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
+            0xF0, 0x10, 0xF0, 0x10, 0xF0, // 3
+            0x90, 0x90, 0xF0, 0x10, 0x10, // 4
+            0xF0, 0x80, 0xF0, 0x10, 0xF0, // 5
+            0xF0, 0x80, 0xF0, 0x90, 0xF0, // 6
+            0xF0, 0x10, 0x20, 0x40, 0x40, // 7
+            0xF0, 0x90, 0xF0, 0x90, 0xF0, // 8
+            0xF0, 0x90, 0xF0, 0x10, 0xF0, // 9
+            0xF0, 0x90, 0xF0, 0x90, 0x90, // A
+            0xE0, 0x90, 0xE0, 0x90, 0xE0, // B
+            0xF0, 0x80, 0x80, 0x80, 0xF0, // C
+            0xE0, 0x90, 0x90, 0x90, 0xE0, // D
+            0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
+            0xF0, 0x80, 0xF0, 0x80, 0x80  // F
+        }};
     
     for(int i = 0; i < 80; ++i){
         memory_.at(i) = fontset_[i];
     }
-    for(int i = 80; i < memory_.size(); ++i){
+    for(size_t i = 80; i < memory_.size(); ++i){
         memory_.at(i) = 0;
     }
     
@@ -48,20 +70,25 @@ void Chip8::init(){
 }
 
 void Chip8::load(const std::string &path){
-    std::ifstream rom(path, std::ios::binary);
+    std::ifstream rom(path, std::ios::binary|std::ios::ate);
     if(rom){
-        std::vector<unsigned char> buffer(
-                (std::istreambuf_iterator<char>(rom)),
-                (std::istreambuf_iterator<char>()));
-        if(buffer.size() > (4096 - 512)){
-            std::cerr << "The size of the ROM file is too large." << std::endl;
+        auto size = rom.tellg();
+
+        if(size > (4096 - 512)){
+            std::cerr << "The size of the ROM file is too large to be loaded." << std::endl;
         } else{
-            for(int i = 0; i < buffer.size(); ++i){
-                memory_.at(i + 512) = buffer.at(i);
+            auto buffer = new char[size];
+            rom.seekg(0, std::ios::beg);
+            rom.read(buffer, size);
+            
+            for(int i = 0; i < size; ++i){
+                memory_.at(i + 512) = buffer[i];
             }
-            std::cout << "ROM file has been copied successfully." << std::endl;
+
+            rom.close();
+            std::cout << "The ROM file has been loaded successfully." << std::endl;
         }
     } else{
-        std::cerr << "ROM file couldn't be opened." << std::endl;
+        std::cerr << "The ROM file couldn't be opened." << std::endl;
     }
 }

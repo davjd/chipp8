@@ -18,7 +18,7 @@
 #include <iostream>
 #include <bitset>
 #include <fstream>
-
+#include <vector>
 int main(){
     // for now this file is used to experiment with stuff.
     
@@ -30,9 +30,20 @@ int main(){
     //std::cout << std::bitset<8>(operation) << std::endl;
     */
 
-    const std::ifstream rom("../READE.md");
+    std::ifstream rom("../pong.rom", std::ios::binary|std::ios::ate);
     if(rom){
-        std::cout << "file was opened.";
+
+        std::cout << "file was opened."; 
+        auto size = rom.tellg();
+        auto memblock = new char [size];
+        rom.seekg(0, std::ios::beg);
+        rom.read(memblock, size);
+        rom.close();
+        std::cout << "the entire file content is in memory";
+        
+        std::cout << "first item: " << ( memblock[0]) << std::endl;
+        
+        delete[] memblock;
     } else{
         std::cout << "couldn't open file.";
     }
