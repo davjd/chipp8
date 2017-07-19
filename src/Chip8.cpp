@@ -85,7 +85,8 @@ void Chip8::load(const std::string &path){
                 memory_.at(i + 512) = ((unsigned char) buffer[i]);
             }
 
-            std::cout << "The ROM file has been loaded successfully." << std::endl;
+            std::cout << "The ROM file has been loaded successfully." 
+                << std::endl;
         }
         rom.close();
     } else{
@@ -97,10 +98,88 @@ void Chip8::cycle(){
     // fetch opcode.
     opcode_ = memory_[pCtr_] << 8 | memory_[pCtr_ + 1];
 
-    // decode opcode by isolating the operation.
-    switch(1){
-        
+    // decode opcode by isolating left-most bit.
+    switch((opcode_ & 0xF0) >> 4){
+        case 0x0:{
+                     switch(memory_[pCtr_ + 1]){
+                        case 0xE0 :{
+                                       graphics_.fill(0);
+                                   }
+                                   break;
+                        case 0xEE :{
 
+                                   }
+                                   break;
+                        default: 
+                                   undefineOpcode(); 
+                     }
+                 }
+                 break;
+        case 0x1:{
+                     unsigned short address = opcode_ & 0x0FFF;
 
+                 }
+                 break;
+        case 0x2:{
+
+                 }
+                 break;
+        case 0x3:{
+
+                 }
+                 break;
+        case 0x4:{
+
+                 }
+                 break;
+        case 0x5:{
+
+                 }
+                 break;
+        case 0x6:{
+
+                 }
+                 break;
+        case 0x7:{
+
+                 }
+                 break;
+        case 0x8:{
+
+                 }
+                 break;
+        case 0x9:{
+
+                 }
+                 break;
+        case 0xA:{
+
+                 }
+                 break;
+        case 0xB:{
+
+                 }
+                 break;
+        case 0xC:{
+
+                 }
+                 break;
+        case 0xD:{
+
+                 }
+                 break;
+        case 0xE:{
+
+                 }
+                 break;
+        case 0xF:{
+
+                 }
+                 break;
+        default: undefineOpcode();
     }
+}
+
+void Chip8::undefineOpcode() noexcept{
+    std::cout << "Opcode is undefined." << std::endl;
 }

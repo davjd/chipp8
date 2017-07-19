@@ -41,6 +41,7 @@ class Chip8{
         void init();
         void load(const std::string& path);
         void cycle();
+        void undefineOpcode() noexcept;
 };
 
 #endif
