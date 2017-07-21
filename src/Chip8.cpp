@@ -116,24 +116,33 @@ void Chip8::cycle(){
                  }
                  break;
         case 0x1:{
-                     unsigned short address = opcode_ & 0x0FFF;
-
+                     pCtr_ = opcode_ & 0x0FFF;
                  }
                  break;
         case 0x2:{
-
+                    pCtr_ = opcode_ & 0x0FFF;
+                    cycle();
                  }
                  break;
         case 0x3:{
-
+                     if(register_[memory_[pCtr_] & 0x0F] 
+                             == memory_[pCtr_ + 1]){
+                         pCtr_ += 4;
+                     }
                  }
                  break;
         case 0x4:{
-
+                     if(register_[memory_[pCtr_] & 0x0F] 
+                             != memory_[pCtr_ + 1]){
+                         pCtr_ += 4;
+                     }
                  }
                  break;
         case 0x5:{
-
+                     if(register_[memory_[pCtr_] & 0x0F] 
+                            == register_[memory_[pCtr_ + 1]]){
+                         pCtr_ += 4;
+                     } 
                  }
                  break;
         case 0x6:{

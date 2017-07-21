@@ -23,14 +23,14 @@ int main(){
     // for now this file is used to experiment with stuff.
     
     
-    unsigned char op = 0x1E;
-    unsigned char code = 0xEE;
+    unsigned char op = 0x3E;
+    unsigned char code = 0xAE;
     unsigned short opcode = (op << 8) | code;
     unsigned char operation = (op & 0xF0) >> 4;
-    unsigned short item = opcode & 0x0FFF;
-
+    unsigned char v = op & 0x0F;
     //std::cout << "operation: " << std::bitset<8>(operation) << std::endl;
-    std::cout << "item: " << std::bitset<16>(item) << std::endl;
+    std::cout << "v: " << std::bitset<8>(v) << std::endl;
+    std::cout << "NN: " << std::bitset<8>(code) << std::endl;
     
 
     return 0;
