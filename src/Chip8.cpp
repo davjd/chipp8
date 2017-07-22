@@ -146,35 +146,90 @@ void Chip8::cycle(){
                  }
                  break;
         case 0x6:{
-
+                     register_[memory_[pCtr_] & 0x0F] = memory_[pCtr_ + 1];
                  }
                  break;
         case 0x7:{
+                     register_[memory_[pCtr_] & 0x0F] += memory_[pCtr_ + 1];
 
                  }
                  break;
         case 0x8:{
+                     switch(memory_[pCtr_ + 1] & 0x0F){
+                         case 0:{
+                                    register_[memory_[pCtr_] & 0x0F] 
+                                        = register_[memory_[pCtr_ + 1] & 0xF]; 
+                                }
+                                break;
+                         case 1:{
+                                    register_[memory_[pCtr_] & 0x0F] |= (memory_[pCtr_ + 1] & 0xF);
+                                }
+                                break;
+                         case 2:{
+                                    register_[memory_[pCtr_] & 0x0F] &= (memory_[pCtr_ + 1] & 0xF);
 
+                                }
+                                break;
+                         case 3:{
+                                    register_[memory_[pCtr_] & 0x0F] ^= (memory_[pCtr_ + 1] & 0xF);
+                                }
+                                break;
+                         case 4:{
+                                    register_[memory_[pCtr_] & 0x0F] += (memory_[pCtr_ + 1] & 0xF);
+                                    if(register_[memory_[pCtr_] & 0x0F] > 10){
+                                        register_[0xF] = 1;
+                                    }
+                                    else register_[0xF] = 0;
+                                }
+                                break;
+                         case 5:{
+                                    register_[memory_[pCtr_] & 0x0F] -= (memory_[pCtr_ + 1] & 0xF);
+                                    // TODO: check if borrowed number happened.
+                                }
+                                break;
+                         case 6:{
+                                    register_[memory_[pCtr_] & 0x0F] >>= 1;
+                                    // TODO: VF is set to the value of the most significant bit of VX before the shift.
+                                }
+                                break;
+                         case 7:{
+                                    register_[memory_[pCtr_] & 0x0F] = (memory_[pCtr_ + 1] & 0xF) - (memory_[pCtr_] & 0x0F);
+                                    // TODO: check if borrowing happened.
+                                }
+                                break;
+                         case 0xE:{
+                                      register_[memory_[pCtr_] & 0x0F] <<= 1;
+                                      // TODO: VF is set to the value of the most significant bit of VX before the shift.
+                                  }
+                                  break;
+                         default:{
+                                     undefineOpcode();
+                                 }
+                     }
                  }
                  break;
         case 0x9:{
-
+                     if(register_[memory_[pCtr_] & 0x0F] != register_[memory_[pCtr_ + 1] & 0xF]){
+                         pCtr_ += 4;
+                     }
                  }
                  break;
         case 0xA:{
-
+                     index_ = opcode_ & 0x0FFF;
                  }
                  break;
         case 0xB:{
-
+                     pCtr_ = register_[0] + (opcode_ & 0x0FFF);
                  }
                  break;
         case 0xC:{
-
+                     register_[memory_[pCtr_] & 0x0F] = 1 & memory_[pCtr_ + 1];
+                     // TODO: change 1 to rand().
                  }
                  break;
         case 0xD:{
-
+                     //draw(register_[memory_[pCtr_] & 0x0F], register_[memory_[pCtr + 1] & 0xF], memory_[pCtr_ + 1] & 0x0F);
+                     //TODO: implement draw.
                  }
                  break;
         case 0xE:{
