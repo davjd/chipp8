@@ -42,6 +42,10 @@ class Chip8{
         void load(const std::string& path);
         void cycle();
         void undefineOpcode() noexcept;
+        unsigned char delay() noexcept;
+        unsigned short key() noexcept;
+        void setDelay(unsigned char delay) noexcept;
+        void setSound(unsigned char sound) noexcept;
 };
 
 #endif

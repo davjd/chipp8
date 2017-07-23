@@ -233,15 +233,98 @@ void Chip8::cycle(){
                  }
                  break;
         case 0xE:{
-
+                     switch(memory_[pCtr_ + 1]){
+                         case 0x9E:{
+                                       if(key() == (register_[memory_[pCtr_] & 0x0F])){
+                                           pCtr_ += 4;
+                                       }
+                                   }
+                                   break;
+                         case 0xA1:{
+                                       if(key() != (register_[memory_[pCtr_] & 0x0F])){
+                                           pCtr_ += 4;
+                                       }
+                                   }
+                                   break;
+                         default:{
+                                     undefineOpcode();
+                                 }
+                     }
                  }
                  break;
         case 0xF:{
+                     switch(memory_[pCtr_ + 1]){
+                         case 0x07:{
+                                       register_[memory_[pCtr_] & 0x0F]
+                                           = delay();
+                                   }
+                                   break;
+                         case 0x0A:{
+                                       register_[memory_[pCtr_] & 0x0F]
+                                           = key();
+                                  }
+                                  break;
+                         case 0x15:{
+                                       setDelay(register_[memory_[pCtr_] 
+                                               & 0x0F]);
+                                   }
+                                   break;
+                         case 0x18:{
+                                       setSound(register_[memory_[pCtr_]
+                                               & 0x0F]);
+                                   }
+                                   break;
+                         case 0x1E:{
+                                       index_ += register_[memory_[pCtr_]
+                                           & 0x0F];
+                                   }
+                                   break;
+                         case 0x29:{
+                                       index_ = spriteAdress_[
+                                           register_[memory_[pCtr_] 
+                                               & 0x0F]];
+                                   }
+                                   break;
+                         case 0x33:{
 
+                                   }
+                                   break;
+                         case 0x55:{
+                                       for(int i = 0; i < register_.size(); ++i){
+                                           memory_[index_ + i] = register_[i];
+                                       }
+                                   }
+                                   break;
+                         case 0x65:{
+                                       for(int i = 0; i < register_.size(); ++i){
+                                           register_[i] = memory_[index_ + i];
+                                       }
+                                   }
+                                   break;
+                         default: undefineOpcode();
+                     }
                  }
                  break;
+
         default: undefineOpcode();
     }
+}
+unsigned char Chip8::delay() noexcept{
+    return delayTimer_;
+}
+
+unsigned short Chip8::key() noexcept{
+    return 0xF;
+    // TODO: integrate SDL into this method.
+}
+
+//TODO: implement setters.
+void Chip8::setDelay(unsigned char delay) noexcept{
+
+}
+
+void Chip8::setSound(unsigned char sound) noexcept{
+
 }
 
 void Chip8::undefineOpcode() noexcept{
