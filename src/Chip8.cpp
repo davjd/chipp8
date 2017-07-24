@@ -107,7 +107,7 @@ void Chip8::cycle(){
                                    }
                                    break;
                         case 0xEE :{
-
+                                       pCtr_ = stack_[--stackPtr_];
                                    }
                                    break;
                         default: 
@@ -120,8 +120,9 @@ void Chip8::cycle(){
                  }
                  break;
         case 0x2:{
-                    pCtr_ = opcode_ & 0x0FFF;
-                    cycle();
+                     stack_[stackPtr_] = pCtr_;
+                     ++stackPtr_;
+                     pCtr_ = opcode_ & 0x0FFF;
                  }
                  break;
         case 0x3:{
@@ -162,44 +163,54 @@ void Chip8::cycle(){
                                 }
                                 break;
                          case 1:{
-                                    register_[memory_[pCtr_] & 0x0F] |= (memory_[pCtr_ + 1] & 0xF);
+                                    register_[memory_[pCtr_] & 0x0F] |= register_[(memory_[pCtr_ + 1] & 0xF)];
                                 }
                                 break;
                          case 2:{
-                                    register_[memory_[pCtr_] & 0x0F] &= (memory_[pCtr_ + 1] & 0xF);
+                                    register_[memory_[pCtr_] & 0x0F] &= register_[(memory_[pCtr_ + 1] & 0xF)];
 
                                 }
                                 break;
                          case 3:{
-                                    register_[memory_[pCtr_] & 0x0F] ^= (memory_[pCtr_ + 1] & 0xF);
+                                    register_[memory_[pCtr_] & 0x0F] ^= register_[(memory_[pCtr_ + 1] & 0xF)];
                                 }
                                 break;
                          case 4:{
-                                    register_[memory_[pCtr_] & 0x0F] += (memory_[pCtr_ + 1] & 0xF);
-                                    if(register_[memory_[pCtr_] & 0x0F] > 10){
+                                    register_[memory_[pCtr_] & 0x0F] += register_[memory_[pCtr_ + 1] & 0xF];
+                                    if(register_[memory_[pCtr_] & 0x0F] > 0xFF){
                                         register_[0xF] = 1;
                                     }
                                     else register_[0xF] = 0;
                                 }
                                 break;
                          case 5:{
-                                    register_[memory_[pCtr_] & 0x0F] -= (memory_[pCtr_ + 1] & 0xF);
-                                    // TODO: check if borrowed number happened.
+                                    if(register_[memory_[pCtr_] & 0x0F] < register_[memory_[pCtr_ + 1] & 0xF]){
+                                        register_[0xF] = 0;
+                                    }
+                                    else register_[0xF] = 1;
+
+                                    register_[memory_[pCtr_] & 0x0F] -= register_[memory_[pCtr_ + 1] & 0xF];
                                 }
                                 break;
                          case 6:{
+                                    register_[0xF] = register_[memory_[pCtr_] & 0x0F] & 0x1;
                                     register_[memory_[pCtr_] & 0x0F] >>= 1;
-                                    // TODO: VF is set to the value of the most significant bit of VX before the shift.
                                 }
                                 break;
                          case 7:{
-                                    register_[memory_[pCtr_] & 0x0F] = (memory_[pCtr_ + 1] & 0xF) - (memory_[pCtr_] & 0x0F);
-                                    // TODO: check if borrowing happened.
+                                    if(register_[memory_[pCtr_ + 1] & 0xF] < register_[memory_[pCtr_] & 0x0F]){
+                                        register_[0xF] = 0;
+
+                                    }
+                                    else register_[0xF] = 1;
+
+                                    register_[memory_[pCtr_] & 0x0F] = register_[memory_[pCtr_ + 1] & 0xF] 
+                                        - register_[memory_[pCtr_] & 0x0F];
                                 }
                                 break;
                          case 0xE:{
+                                      register_[0xF] = register_[memory_[pCtr_] & 0x0F] >> 7;
                                       register_[memory_[pCtr_] & 0x0F] <<= 1;
-                                      // TODO: VF is set to the value of the most significant bit of VX before the shift.
                                   }
                                   break;
                          default:{
@@ -224,7 +235,7 @@ void Chip8::cycle(){
                  break;
         case 0xC:{
                      register_[memory_[pCtr_] & 0x0F] = 1 & memory_[pCtr_ + 1];
-                     // TODO: change 1 to rand().
+                     // 1 can be changed to any number between 0 - 255.
                  }
                  break;
         case 0xD:{
@@ -290,6 +301,7 @@ void Chip8::cycle(){
                                    }
                                    break;
                          case 0x55:{
+                                       // TODO: change register_.size() to Vx.
                                        for(int i = 0; i < register_.size(); ++i){
                                            memory_[index_ + i] = register_[i];
                                        }
@@ -320,11 +332,11 @@ unsigned short Chip8::key() noexcept{
 
 //TODO: implement setters.
 void Chip8::setDelay(unsigned char delay) noexcept{
-
+    delayTimer_ = delay;
 }
 
 void Chip8::setSound(unsigned char sound) noexcept{
-
+    soundTimer_ = sound;
 }
 
 void Chip8::undefineOpcode() noexcept{
