@@ -302,7 +302,8 @@ void Chip8::cycle(){
                                    break;
                          case 0x55:{
                                        // TODO: change register_.size() to Vx.
-                                       for(int i = 0; i < register_.size(); ++i){
+                                       unsigned short vx = register_[memory_[pCtr_] & 0x0F];
+                                       for(int i = 0; i < vx; ++i){
                                            memory_[index_ + i] = register_[i];
                                        }
                                    }
