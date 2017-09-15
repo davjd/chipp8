@@ -19,10 +19,13 @@
 #include <bitset>
 #include <fstream>
 #include <vector>
+
+#include "Chip8.h"
+
 int main(){
     // for now this file is used to experiment with stuff.
     
-    
+    /*
     unsigned char op = 0x3E;
     unsigned char code = 0xAE;
     unsigned short opcode = (op << 8) | code;
@@ -31,7 +34,12 @@ int main(){
     //std::cout << "operation: " << std::bitset<8>(operation) << std::endl;
     std::cout << "v: " << std::bitset<8>(v) << std::endl;
     std::cout << "NN: " << std::bitset<8>(code) << std::endl;
-    
+    */
+
+    Chip8* emu = new Chip8();
+    emu->load("../roms/15PUZZLE");
+
+
 
     return 0;
 }

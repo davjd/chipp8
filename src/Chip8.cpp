@@ -39,7 +39,7 @@ void Chip8::init(){
 
     graphics_.fill(0);
     fontset_=
-        {{ 
+        {{
             0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
             0x20, 0x60, 0x20, 0x20, 0x70, // 1
             0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
@@ -75,7 +75,8 @@ void Chip8::load(const std::string &path){
         auto size = rom.tellg();
 
         if(size > (4096 - 512)){
-            std::cerr << "The size of the ROM file is too large to be loaded." << std::endl;
+            std::cerr << "The size of the ROM file is too large to be loaded." 
+            << std::endl;
         } else{
             auto buffer = new char[size];
             rom.seekg(0, std::ios::beg);
@@ -86,11 +87,12 @@ void Chip8::load(const std::string &path){
             }
 
             std::cout << "The ROM file has been loaded successfully." 
-                << std::endl;
+            << std::endl;
         }
         rom.close();
     } else{
-        std::cerr << "The ROM file couldn't be opened." << std::endl;
+        std::cerr << "The ROM file couldn't be opened." 
+        << std::endl;
     }
 }
 
@@ -266,42 +268,38 @@ void Chip8::cycle(){
         case 0xF:{
                      switch(memory_[pCtr_ + 1]){
                          case 0x07:{
-                                       register_[memory_[pCtr_] & 0x0F]
-                                           = delay();
+                                       register_[memory_[pCtr_] & 0x0F] = delay();
                                    }
                                    break;
                          case 0x0A:{
-                                       register_[memory_[pCtr_] & 0x0F]
-                                           = key();
+                                       register_[memory_[pCtr_] & 0x0F] = key();
                                   }
                                   break;
                          case 0x15:{
-                                       setDelay(register_[memory_[pCtr_] 
-                                               & 0x0F]);
+                                       setDelay(register_[memory_[pCtr_] & 0x0F]);
                                    }
                                    break;
                          case 0x18:{
-                                       setSound(register_[memory_[pCtr_]
-                                               & 0x0F]);
+                                       setSound(register_[memory_[pCtr_] & 0x0F]);
                                    }
                                    break;
                          case 0x1E:{
-                                       index_ += register_[memory_[pCtr_]
-                                           & 0x0F];
+                                       index_ += register_[memory_[pCtr_] & 0x0F];
                                    }
                                    break;
                          case 0x29:{
-                                       index_ = spriteAdress_[
-                                           register_[memory_[pCtr_] 
-                                               & 0x0F]];
+                                       index_ = register_[memory_[pCtr_] & 0x0F] * 0x5;
                                    }
                                    break;
                          case 0x33:{
-
+                                        unsigned short x = register_[memory_[pCtr_] & 0x0F];
+                                        unsigned short tmp = x % 100;
+                                        memory_[index_] = x / 100;
+                                        memory_[index_ + 1] = (x / 10) % 10;
+                                        memory_[index_ + 2] = tmp % 10;
                                    }
                                    break;
                          case 0x55:{
-                                       // TODO: change register_.size() to Vx.
                                        unsigned short vx = register_[memory_[pCtr_] & 0x0F];
                                        for(int i = 0; i < vx; ++i){
                                            memory_[index_ + i] = register_[i];

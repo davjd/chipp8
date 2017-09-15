@@ -20,7 +20,6 @@
 
 #include <array>
 #include <memory>
-#include "CPU.h"
 class Chip8{
     private:
         std::array<unsigned char, 4096> memory_;
